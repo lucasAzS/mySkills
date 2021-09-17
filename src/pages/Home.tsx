@@ -6,18 +6,26 @@ import {
   TextInput,
   Platform,
   FlatList,
-  StatusBar,
 } from 'react-native';
 import {Button} from '../components/Button';
 import {SkillCard} from '../components/SkillCard';
 
+interface SkillData {
+  id: string;
+  name: string;
+}
+
 export function Home() {
   const [newSkill, setNewSkill] = React.useState('');
-  const [mySkills, setMySkills] = React.useState([]);
+  const [mySkills, setMySkills] = React.useState<SkillData[]>([]);
   const [greeting, setGreeting] = React.useState('');
 
   function handleAddNewSkill() {
-    setMySkills(oldState => [...oldState, newSkill]);
+    const data = {
+      id: String(new Date().getTime()),
+      name: newSkill,
+    };
+    setMySkills(oldState => [...oldState, data]);
   }
 
   React.useEffect(() => {
@@ -46,14 +54,14 @@ export function Home() {
         value={newSkill}
       />
 
-      <Button onPress={handleAddNewSkill} />
+      <Button onPress={handleAddNewSkill} title="Add New Skill" />
 
       <Text style={[styles.title, {marginVertical: 50}]}>My Skills</Text>
 
       <FlatList
         data={mySkills}
-        keyExtractor={(_, index) => index}
-        renderItem={({item}) => <SkillCard skill={item} />}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => <SkillCard skill={item.name} />}
       />
     </View>
   );
